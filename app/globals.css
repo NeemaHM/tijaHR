@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --teal-900: #073E3B;
+  --teal-700: #0B5D5A;
+  --teal-600: #0E7C74;
+  --teal-tint: #E6F4F2;
+  --teal-bright: #2FA69A;
+  --ochre: #8A6D3B;
+  --ink: #25231F;
+  --text-secondary: #5B584F;
+  --text-muted: #8C887F;
+  --bg: #F7F5F1;
+  --surface: #FFFFFF;
+  --border: #E4E0D8;
+  --success: #2E7D32;
+  --success-bg: #E9F5EA;
+  --warning: #B8860B;
+  --warning-bg: #FBF1DC;
+  --danger: #B3261E;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.display {
+  font-family: 'Fraunces', serif;
+}
+
+a {
+  color: inherit;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.r1 { transition-delay: 0.05s; } .r2 { transition-delay: 0.12s; } .r3 { transition-delay: 0.19s; }
+.r4 { transition-delay: 0.26s; } .r5 { transition-delay: 0.33s; } .r6 { transition-delay: 0.4s; }
+
+.feature-card {
+  transition: transform 0.35s cubic-bezier(.2,.8,.2,1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -18px rgba(11,93,90,0.28);
+  border-color: var(--teal-700);
+}
+
+.nav-link { position: relative; text-decoration: none; }
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 1.5px;
+  background: var(--teal-700);
+  transition: width 0.25s ease;
+}
+.nav-link:hover::after { width: 100%; }
+
+.cta-btn {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -8px rgba(11,93,90,0.45);
+}
+
+.marquee-track { animation: marquee 26s linear infinite; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .reveal { transition: none; opacity: 1; transform: none; }
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--teal-700) !important;
+  box-shadow: 0 0 0 3px rgba(11,93,90,0.12);
+  outline: none;
+}
+
+@media (max-width: 720px) {
+  .desktop-nav { display: none !important; }
+  .mobile-menu-btn { display: block !important; }
+  .hero-grid { grid-template-columns: 1fr !important; }
+  .hero-visual { display: none !important; }
+}
