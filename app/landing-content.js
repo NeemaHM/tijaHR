@@ -1,27 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ArrowRight, Check, Menu, X, Users, CalendarCheck, FileText, Layers, TrendingUp } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ArrowRight, Check, Menu, X, Users, CalendarCheck, FileText, Megaphone, Smartphone, Monitor, GripVertical } from "lucide-react";
 
 const industries = [
   "Manufacturing", "Mining", "Agriculture", "Hospitality", "Healthcare",
-  "Logistics", "Retail", "Education", "NGOs", "Financial Services", "Government", "Media", "Other",
+  "Logistics", "Retail", "Education", "NGOs", "Financial Services", "Government", "Media",
 ];
 
-const employeeRanges = ["1–20", "21–100", "101–500", "500+"];
-
-const pillars = [
-  { icon: Layers, title: "Simple by design", desc: "Easy for teams to understand and use, regardless of technical background." },
-  { icon: Users, title: "Built around local operations", desc: "Shaped through direct conversations with organizations operating in Tanzania." },
-  { icon: CalendarCheck, title: "One connected system", desc: "Reduce fragmented employee administration across spreadsheets, paper, and messages." },
-  { icon: TrendingUp, title: "Built to grow", desc: "Suitable for organizations as their teams and operational needs expand." },
-];
-
-const exploring = [
-  { icon: Users, title: "Employee records" },
-  { icon: CalendarCheck, title: "Leave and approvals" },
-  { icon: FileText, title: "Documents" },
-  { icon: Layers, title: "Workforce visibility" },
+const features = [
+  { icon: Users, title: "Employee directory", desc: "Every employee, department, and role in one searchable place — not three spreadsheets that disagree with each other." },
+  { icon: CalendarCheck, title: "Leave management", desc: "Statutory Tanzanian leave types built in. Requests, approvals, and balances handled automatically." },
+  { icon: Check, title: "Approval workflows", desc: "Route requests to the right manager without a single WhatsApp voice note." },
+  { icon: FileText, title: "Employee documents", desc: "Contracts, IDs, and certificates stored securely — no more searching a filing cabinet under deadline." },
+  { icon: Megaphone, title: "Internal announcements", desc: "One official channel for company news, instead of five different WhatsApp groups." },
+  { icon: Monitor, title: "HR reports", desc: "Headcount, leave trends, and turnover, ready when your director asks for them." },
 ];
 
 function useReveal() {
@@ -43,23 +36,95 @@ function useReveal() {
   }, []);
 }
 
-/* Representative dashboard mockup — clearly conceptual, not a claim of existing functionality */
-function ConceptDashboard() {
+function CompareSlider() {
+  const [pos, setPos] = useState(50);
+  const ref = useRef(null);
+  const dragging = useRef(false);
+
+  const update = useCallback((clientX) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    let pct = ((clientX - rect.left) / rect.width) * 100;
+    pct = Math.max(4, Math.min(96, pct));
+    setPos(pct);
+  }, []);
+
+  useEffect(() => {
+    const move = (e) => { if (dragging.current) update(e.touches ? e.touches[0].clientX : e.clientX); };
+    const up = () => (dragging.current = false);
+    window.addEventListener("mousemove", move);
+    window.addEventListener("touchmove", move);
+    window.addEventListener("mouseup", up);
+    window.addEventListener("touchend", up);
+    return () => {
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("mouseup", up);
+      window.removeEventListener("touchend", up);
+    };
+  }, [update]);
+
   return (
-    <div style={{ background: "var(--surface)", borderRadius: 14, padding: 20, border: "1px solid var(--border)", boxShadow: "0 24px 48px -24px rgba(7,60,64,0.28)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-        <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--text)" }}>Team overview</div>
-        <span style={{ fontSize: 9.5, fontWeight: 600, color: "var(--text-muted)", background: "var(--bg)", padding: "3px 8px", borderRadius: 20, border: "1px solid var(--border)" }}>
-          Concept preview
-        </span>
-      </div>
-      <p style={{ fontSize: 10, color: "var(--text-muted)", margin: "2px 0 14px" }}>Illustrative only — not live product data</p>
-      {["Employee records", "Leave requests", "Document status"].map((t) => (
-        <div key={t} style={{ display: "flex", alignItems: "center", gap: 9, padding: "9px 0", borderBottom: "1px solid var(--border)" }}>
-          <div style={{ width: 26, height: 26, borderRadius: 7, background: "var(--teal-wash)", flexShrink: 0 }} />
-          <div style={{ fontSize: 11.5, color: "var(--text-secondary)" }}>{t}</div>
+    <div
+      ref={ref}
+      style={{ position: "relative", width: "100%", maxWidth: 880, margin: "0 auto", aspectRatio: "16/10", borderRadius: 18, overflow: "hidden", border: "1px solid #E4E0D8", boxShadow: "0 20px 60px -20px rgba(11,93,90,0.25)", cursor: "ew-resize", userSelect: "none" }}
+      onMouseDown={(e) => { dragging.current = true; update(e.clientX); }}
+      onTouchStart={(e) => { dragging.current = true; update(e.touches[0].clientX); }}
+    >
+      {/* Chaos side (full) */}
+      <div style={{ position: "absolute", inset: 0, background: "#EFEBE2", padding: 24, overflow: "hidden" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "#8C887F", marginBottom: 14 }}>The old way</div>
+        <div style={{ background: "#fff", border: "1px solid #DAD5C8", borderRadius: 6, marginBottom: 10, transform: "rotate(-1.5deg)", boxShadow: "0 4px 10px rgba(0,0,0,0.06)" }}>
+          {[1, 2, 3].map((r) => (
+            <div key={r} style={{ display: "flex", borderBottom: "1px solid #EDEAE1" }}>
+              {[1, 2, 3, 4].map((c) => (
+                <div key={c} style={{ flex: 1, padding: "7px 8px", fontSize: 10.5, color: "#8C887F", borderRight: "1px solid #EDEAE1" }}>
+                  {r === 1 ? ["Name", "Dept", "Leave", "Status"][c - 1] : "—"}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
-      ))}
+        <div style={{ background: "#DCF3D9", borderRadius: "10px 10px 10px 2px", padding: "8px 12px", fontSize: 11, color: "#3D3A34", maxWidth: 190, marginBottom: 8, transform: "rotate(1deg)", boxShadow: "0 3px 8px rgba(0,0,0,0.08)" }}>
+          "Bosi naomba likizo wiki ijayo 🙏"
+        </div>
+        <div style={{ background: "#fff", borderRadius: "10px 10px 10px 2px", padding: "8px 12px", fontSize: 11, color: "#3D3A34", maxWidth: 160, marginBottom: 8, transform: "rotate(-1deg)", marginLeft: 30, boxShadow: "0 3px 8px rgba(0,0,0,0.08)" }}>
+          "Sawa, nitakuarifu kesho"
+        </div>
+        <div style={{ position: "absolute", right: 24, bottom: 24, width: 96, height: 88, background: "#F9E7A0", padding: 10, fontSize: 10, color: "#5B584F", transform: "rotate(5deg)", boxShadow: "0 6px 14px rgba(0,0,0,0.12)" }}>
+          Follow up Msoma docs — missing ID copy
+        </div>
+      </div>
+
+      <div style={{ position: "absolute", inset: 0, background: "#F7F5F1", padding: 24, clipPath: `inset(0 0 0 ${pos}%)` }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "#0B5D5A", marginBottom: 14 }}>With TijaHR</div>
+        <div style={{ background: "#fff", border: "1px solid #E4E0D8", borderRadius: 10, padding: 14, marginBottom: 10, display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 30, height: 30, borderRadius: "50%", background: "#E6F4F2", color: "#0B5D5A", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>EK</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 11.5, fontWeight: 600, color: "#25231F" }}>Esther Kimaro</div>
+            <div style={{ fontSize: 10, color: "#8C887F" }}>Annual Leave · 12–15 Aug</div>
+          </div>
+          <div style={{ fontSize: 9.5, fontWeight: 600, color: "#2E7D32", background: "#E9F5EA", padding: "3px 8px", borderRadius: 20 }}>Approved</div>
+        </div>
+        <div style={{ background: "#fff", border: "1px solid #E4E0D8", borderRadius: 10, padding: 14, marginBottom: 10, display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 30, height: 30, borderRadius: "50%", background: "#E6F4F2", color: "#0B5D5A", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>DM</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 11.5, fontWeight: 600, color: "#25231F" }}>Daudi Mwakalinga</div>
+            <div style={{ fontSize: 10, color: "#8C887F" }}>Document uploaded</div>
+          </div>
+          <Check size={13} color="#0B5D5A" />
+        </div>
+        <div style={{ background: "linear-gradient(135deg,#0B5D5A,#0E7C74)", borderRadius: 10, padding: "12px 14px", color: "#fff" }}>
+          <div style={{ fontSize: 9.5, opacity: 0.85, textTransform: "uppercase", letterSpacing: "0.04em" }}>All caught up</div>
+          <div style={{ fontSize: 13, fontWeight: 700, marginTop: 2 }}>0 pending approvals</div>
+        </div>
+      </div>
+
+      <div style={{ position: "absolute", top: 0, bottom: 0, left: `${pos}%`, width: 2, background: "#0B5D5A", transform: "translateX(-1px)" }}>
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 36, height: 36, borderRadius: "50%", background: "#0B5D5A", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.25)" }}>
+          <GripVertical size={16} color="#fff" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -67,30 +132,31 @@ function ConceptDashboard() {
 export default function TijaHRLandingPro() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [sendError, setSendError] = useState("");
-  const [errors, setErrors] = useState({});
-  const [form, setForm] = useState({ name: "", email: "", company: "", role: "", industry: "", size: "", phone: "", message: "" });
-
+  const [form, setForm] = useState({ name: "", company: "", industry: "", phone: "", email: "", size: "" });
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [scrollPct, setScrollPct] = useState(0);
   useReveal();
 
-  const validate = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = "Name is required.";
-    if (!form.email.trim()) e.email = "Work email is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email address.";
-    if (!form.company.trim()) e.company = "Company name is required.";
-    if (!form.industry) e.industry = "Please select an industry.";
-    if (!form.size) e.size = "Please select company size.";
-    return e;
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      setScrollPct(pct || 0);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleMouse = (e) => {
+    const { innerWidth, innerHeight } = window;
+    setMouse({ x: (e.clientX / innerWidth - 0.5) * 2, y: (e.clientY / innerHeight - 0.5) * 2 });
   };
 
-  const handleSubmit = async (ev) => {
-    ev.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState("");
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setSendError("");
     setSending(true);
     try {
@@ -99,207 +165,143 @@ export default function TijaHRLandingPro() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           access_key: "ab451001-c82a-4410-85d5-7200f685da86",
-          subject: "New Tija HR demo request",
-          from_name: "Tija HR Website",
-          ...form,
+          subject: "New TijaHR demo request",
+          from_name: "TijaHR Website",
+          name: form.name,
+          company: form.company,
+          industry: form.industry,
+          company_size: form.size,
+          phone: form.phone,
+          email: form.email,
         }),
       });
       const data = await res.json();
       if (data.success) {
         setSubmitted(true);
       } else {
-        setSendError("Something went wrong on our end — please try again, or reach us directly.");
+        setSendError("Something went wrong — please try again, or contact us directly.");
       }
-    } catch {
+    } catch (err) {
       setSendError("Something went wrong — please check your connection and try again.");
     } finally {
       setSending(false);
     }
   };
 
-  const field = (name) => ({
-    value: form[name],
-    onChange: (e) => setForm({ ...form, [name]: e.target.value }),
-    "aria-invalid": !!errors[name],
-    "aria-describedby": errors[name] ? `${name}-error` : undefined,
-  });
-
   return (
-    <div style={{ fontFamily: "'Inter', system-ui, sans-serif", color: "var(--text)", background: "var(--bg)" }}>
-      {/* Nav */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(247,248,249,0.9)", backdropFilter: "blur(10px)", borderBottom: "1px solid var(--border)" }}>
+    <div style={{ fontFamily: "'Inter', system-ui, sans-serif", color: "#25231F", background: "#F7F5F1", overflowX: "hidden" }}>
+      <div style={{ position: "fixed", top: 0, left: 0, height: 3, width: `${scrollPct}%`, background: "linear-gradient(90deg,#0B5D5A,#2FA69A)", zIndex: 100, transition: "width 0.1s linear" }} />
+
+      <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(247,245,241,0.85)", backdropFilter: "blur(10px)", borderBottom: "1px solid #E4E0D8" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="#top" style={{ display: "flex", alignItems: "baseline", gap: 1, textDecoration: "none" }}>
-            <span style={{ fontSize: 20, fontWeight: 700, color: "var(--deep-teal)" }}>Tija</span>
-            <span style={{ fontSize: 18, fontWeight: 500, color: "var(--text-secondary)" }}>&nbsp;HR</span>
-          </a>
-          <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="desktop-nav">
-            <a href="#why" className="nav-link" style={{ fontSize: 14, color: "var(--text-secondary)" }}>Why Tija</a>
-            <a href="#for-businesses" className="nav-link" style={{ fontSize: 14, color: "var(--text-secondary)" }}>For Businesses</a>
-            <a href="#about" className="nav-link" style={{ fontSize: 14, color: "var(--text-secondary)" }}>About</a>
-            <a href="#demo" className="cta-btn" style={{ fontSize: 14, fontWeight: 600, color: "#fff", background: "var(--deep-teal)", padding: "10px 20px", borderRadius: 8, textDecoration: "none" }}>Request a Demo</a>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 1 }}>
+            <span className="display" style={{ fontSize: 21, fontWeight: 600, color: "#0B5D5A" }}>Tija</span>
+            <span style={{ fontSize: 19, fontWeight: 500, color: "#8A6D3B" }}>HR</span>
           </div>
-          <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" aria-label="Toggle menu" aria-expanded={menuOpen} style={{ display: "none", background: "none", border: "none", color: "var(--text)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 34 }} className="desktop-nav">
+            <a href="#features" className="nav-link" style={{ fontSize: 14, color: "#5B584F", textDecoration: "none" }}>Features</a>
+            <a href="#compare" className="nav-link" style={{ fontSize: 14, color: "#5B584F", textDecoration: "none" }}>Why TijaHR</a>
+            <a href="#demo" className="nav-link" style={{ fontSize: 14, color: "#5B584F", textDecoration: "none" }}>Request a demo</a>
+            <a href="#demo" className="cta-btn" style={{ fontSize: 14, fontWeight: 600, color: "#fff", background: "#0B5D5A", padding: "10px 20px", borderRadius: 8, textDecoration: "none" }}>Get started</a>
+          </div>
+          <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" style={{ display: "none", background: "none", border: "none" }}>
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
         {menuOpen && (
           <div style={{ padding: "0 24px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
-            <a href="#why" style={{ fontSize: 14, color: "var(--text-secondary)", textDecoration: "none" }} onClick={() => setMenuOpen(false)}>Why Tija</a>
-            <a href="#for-businesses" style={{ fontSize: 14, color: "var(--text-secondary)", textDecoration: "none" }} onClick={() => setMenuOpen(false)}>For Businesses</a>
-            <a href="#about" style={{ fontSize: 14, color: "var(--text-secondary)", textDecoration: "none" }} onClick={() => setMenuOpen(false)}>About</a>
-            <a href="#demo" style={{ fontSize: 14, fontWeight: 600, color: "var(--deep-teal)", textDecoration: "none" }} onClick={() => setMenuOpen(false)}>Request a Demo</a>
+            <a href="#features" style={{ fontSize: 14, color: "#5B584F", textDecoration: "none" }} onClick={() => setMenuOpen(false)}>Features</a>
+            <a href="#compare" style={{ fontSize: 14, color: "#5B584F", textDecoration: "none" }} onClick={() => setMenuOpen(false)}>Why TijaHR</a>
+            <a href="#demo" style={{ fontSize: 14, fontWeight: 600, color: "#0B5D5A", textDecoration: "none" }} onClick={() => setMenuOpen(false)}>Request a demo</a>
           </div>
         )}
       </nav>
 
-      {/* Hero */}
-      <section id="top" style={{ background: "linear-gradient(165deg, var(--deep-teal) 0%, var(--midnight-teal) 100%)", color: "#fff", padding: "72px 24px 84px" }}>
-        <div className="hero-grid" style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 40, alignItems: "center" }}>
+      <section onMouseMove={handleMouse} style={{ position: "relative", background: "linear-gradient(160deg, #0B5D5A 0%, #073E3B 100%)", color: "#fff", padding: "88px 24px 100px", overflow: "hidden" }}>
+        <svg width="520" height="520" viewBox="0 0 520 520" style={{ position: "absolute", top: -80, right: -80, opacity: 0.14, transform: `translate(${mouse.x * 14}px, ${mouse.y * 14}px)`, transition: "transform 0.2s ease-out" }}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <rect key={i} x={i * 60 + 20} y={i * 40 + 20} width="140" height="140" rx="18" fill="none" stroke="#fff" strokeWidth="1" transform={`rotate(${i * 12} 260 260)`} />
+          ))}
+        </svg>
+        <div style={{ position: "absolute", bottom: -100, left: -60, width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(47,166,154,0.25), transparent 70%)", transform: `translate(${mouse.x * -10}px, ${mouse.y * -10}px)`, transition: "transform 0.2s ease-out" }} />
+
+        <div className="hero-grid" style={{ position: "relative", maxWidth: 1160, margin: "0 auto", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 40, alignItems: "center" }}>
           <div>
-            <h1 className="reveal is-visible" style={{ fontSize: "clamp(30px, 4vw, 46px)", fontWeight: 700, lineHeight: 1.15, margin: "0 0 20px", letterSpacing: "-0.01em" }}>
-              Employee management, built for the way East Africa works.
+            <div className="reveal is-visible" style={{ display: "inline-block", fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", background: "rgba(255,255,255,0.12)", padding: "6px 14px", borderRadius: 20, marginBottom: 24, border: "1px solid rgba(255,255,255,0.18)" }}>
+              Built for Tanzania, not translated for it
+            </div>
+            <h1 className="display reveal is-visible" style={{ fontSize: "clamp(34px, 4.6vw, 58px)", fontWeight: 600, lineHeight: 1.08, margin: "0 0 22px", letterSpacing: "-0.015em" }}>
+              Employee management that finally works the way Tanzanian businesses do
             </h1>
-            <p className="reveal is-visible" style={{ fontSize: 16.5, lineHeight: 1.65, color: "var(--teal-wash)", maxWidth: 520, margin: "0 0 30px" }}>
-              Tija HR brings everyday people operations into one simple system — helping growing businesses move beyond scattered spreadsheets, paperwork, and manual processes.
+            <p className="reveal is-visible" style={{ fontSize: 17.5, lineHeight: 1.65, color: "#D9EDEA", maxWidth: 520, margin: "0 0 34px" }}>
+              Replace scattered Excel files, endless WhatsApp threads, and paper personnel files with one simple platform — built for manufacturing, mining, hospitality, healthcare, schools, NGOs, and more.
             </p>
             <div className="reveal is-visible" style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <a href="#demo" className="cta-btn" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 600, color: "var(--deep-teal)", background: "#fff", padding: "14px 24px", borderRadius: 8, textDecoration: "none" }}>
-                Request a Demo <ArrowRight size={17} />
+              <a href="#demo" className="cta-btn" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 600, color: "#0B5D5A", background: "#fff", padding: "15px 26px", borderRadius: 9, textDecoration: "none" }}>
+                Request a demo <ArrowRight size={17} />
               </a>
-              <a href="#about" style={{ display: "inline-flex", alignItems: "center", fontSize: 15, fontWeight: 600, color: "#fff", border: "1px solid rgba(255,255,255,0.35)", padding: "14px 24px", borderRadius: 8, textDecoration: "none" }}>
-                Learn about Tija
+              <a href="#compare" style={{ display: "inline-flex", alignItems: "center", fontSize: 15, fontWeight: 600, color: "#fff", border: "1px solid rgba(255,255,255,0.35)", padding: "15px 26px", borderRadius: 9, textDecoration: "none" }}>
+                See the difference
               </a>
             </div>
           </div>
-          <div className="hero-visual reveal is-visible">
-            <ConceptDashboard />
+
+          <div className="hero-visual" style={{ position: "relative", transform: `translate(${mouse.x * -8}px, ${mouse.y * -8}px)`, transition: "transform 0.2s ease-out" }}>
+            <div style={{ background: "#fff", borderRadius: 16, padding: 20, boxShadow: "0 30px 70px -20px rgba(0,0,0,0.4)", transform: "rotate(2deg)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 700, color: "#25231F" }}>Pending approvals</div>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: "#0B5D5A", background: "#E6F4F2", padding: "3px 9px", borderRadius: 20 }}>3 new</div>
+              </div>
+              {["Esther Kimaro · Annual Leave", "Frank Massawe · Sick Leave", "Baraka Mushi · Compassionate"].map((t) => (
+                <div key={t} style={{ display: "flex", alignItems: "center", gap: 9, padding: "9px 0", borderBottom: "1px solid #F0EEE8" }}>
+                  <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#E6F4F2", flexShrink: 0 }} />
+                  <div style={{ fontSize: 11.5, color: "#3D3A34" }}>{t}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ position: "absolute", bottom: -26, left: -26, background: "#fff", borderRadius: 14, padding: "14px 18px", boxShadow: "0 20px 50px -16px rgba(0,0,0,0.35)", transform: "rotate(-4deg)" }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#0B5D5A" }}>128</div>
+              <div style={{ fontSize: 10.5, color: "#8C887F" }}>employees managed</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Availability badges */}
-      <section style={{ padding: "28px 24px 0", maxWidth: 1160, margin: "0 auto" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 14 }}>
-          <div className="reveal r1" style={{ flex: "1 1 240px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: 16, display: "flex", alignItems: "center", gap: 12 }}>
-            <Layers size={20} color="var(--deep-teal)" />
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 700 }}>Web app — coming soon</div>
-              <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 1 }}>Currently in development with early pilot organizations</div>
-            </div>
-          </div>
-          <div className="reveal r2" style={{ flex: "1 1 240px", background: "var(--teal-wash)", border: "1px solid var(--border)", borderRadius: 10, padding: 16, display: "flex", alignItems: "center", gap: 12 }}>
-            <Users size={20} color="var(--bronze)" />
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 700 }}>Mobile app — coming soon</div>
-              <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 1 }}>For Android and iOS, planned after web launch</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Demo form */}
-      <section id="demo" style={{ padding: "56px 24px 72px" }}>
-        <div style={{ maxWidth: 620, margin: "0 auto" }}>
-          <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--bronze)", marginBottom: 10, textAlign: "center" }}>Get started</p>
-          <h2 className="reveal" style={{ fontSize: "clamp(24px, 3vw, 30px)", fontWeight: 700, margin: "0 0 8px", textAlign: "center" }}>
-            See what Tija could do for your team.
-          </h2>
-          <p className="reveal" style={{ fontSize: 14.5, color: "var(--text-secondary)", textAlign: "center", margin: "0 0 32px" }}>
-            Tell us a little about your organization and we'll be in touch.
-          </p>
-
-          {submitted ? (
-            <div className="reveal is-visible" role="status" style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 32, textAlign: "center" }}>
-              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--teal-wash)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
-                <Check size={20} color="var(--deep-teal)" />
-              </div>
-              <div style={{ fontSize: 16, fontWeight: 700 }}>Thank you — your request has been received</div>
-              <div style={{ fontSize: 13.5, color: "var(--text-secondary)", marginTop: 6 }}>We'll be in touch within one business day.</div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate className="reveal" style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 28, display: "flex", flexDirection: "column", gap: 14 }}>
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <FormField label="Full name" name="name" field={field} errors={errors} placeholder="Your name" />
-                <FormField label="Work email" name="email" field={field} errors={errors} placeholder="you@company.co.tz" type="email" />
-              </div>
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <FormField label="Company / Organization" name="company" field={field} errors={errors} placeholder="Company Ltd" />
-                <FormField label="Role" name="role" field={field} errors={errors} placeholder="e.g. HR Manager" optional />
-              </div>
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <div style={{ flex: "1 1 200px" }}>
-                  <label htmlFor="industry" style={labelStyle}>Industry</label>
-                  <select id="industry" {...field("industry")} style={inputStyle} aria-invalid={!!errors.industry}>
-                    <option value="">Select industry</option>
-                    {industries.map((i) => <option key={i} value={i}>{i}</option>)}
-                  </select>
-                  {errors.industry && <ErrorText id="industry-error">{errors.industry}</ErrorText>}
-                </div>
-                <div style={{ flex: "1 1 200px" }}>
-                  <label htmlFor="size" style={labelStyle}>Approximate number of employees</label>
-                  <select id="size" {...field("size")} style={inputStyle} aria-invalid={!!errors.size}>
-                    <option value="">Select size</option>
-                    {employeeRanges.map((r) => <option key={r} value={r}>{r} employees</option>)}
-                  </select>
-                  {errors.size && <ErrorText id="size-error">{errors.size}</ErrorText>}
-                </div>
-              </div>
-              <FormField label="Phone number (optional)" name="phone" field={field} errors={errors} placeholder="+255 7xx xxx xxx" fullWidth />
-              <div>
-                <label htmlFor="message" style={labelStyle}>What would you like help with? (optional)</label>
-                <textarea id="message" {...field("message")} rows={3} placeholder="A short note is helpful, but not required" style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }} />
-              </div>
-
-              {sendError && (
-                <div role="alert" style={{ fontSize: 13, color: "var(--error)", background: "var(--error-bg)", padding: "10px 14px", borderRadius: 8 }}>
-                  {sendError}
-                </div>
-              )}
-
-              <button type="submit" disabled={sending} className="cta-btn" style={{ marginTop: 6, background: sending ? "var(--soft-teal)" : "var(--deep-teal)", color: "#fff", border: "none", borderRadius: 8, padding: "14px", fontSize: 15, fontWeight: 600, cursor: sending ? "not-allowed" : "pointer" }}>
-                {sending ? "Sending…" : "Request a Demo"}
-              </button>
-            </form>
-          )}
-        </div>
-      </section>
-
-      {/* Problem */}
-      <section style={{ padding: "72px 24px", maxWidth: 1160, margin: "0 auto" }}>
-        <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--bronze)", marginBottom: 10 }}>The problem</p>
-        <h2 className="reveal" style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, margin: "0 0 16px", maxWidth: 680, lineHeight: 1.25 }}>
-          As organizations grow, people operations often end up spread across several disconnected tools
-        </h2>
-        <p className="reveal" style={{ fontSize: 15.5, color: "var(--text-secondary)", maxWidth: 620, lineHeight: 1.65, marginBottom: 32 }}>
-          Spreadsheets, paperwork, messaging apps, and separate records each hold a piece of the picture — making it harder to keep employee information current, consistent, and easy to act on.
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
-          {["Spreadsheets", "Paperwork", "Scattered messages", "Manual approvals"].map((t, i) => (
-            <div key={t} className={`reveal r${i + 1}`} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px", fontSize: 14, fontWeight: 500, color: "var(--text-secondary)" }}>
-              {t}
-            </div>
+      <div style={{ padding: "22px 0", background: "#FFFFFF", borderBottom: "1px solid #E4E0D8", overflow: "hidden" }}>
+        <div style={{ display: "flex", width: "fit-content" }} className="marquee-track">
+          {[...industries, ...industries].map((ind, i) => (
+            <span key={i} style={{ fontSize: 13, fontWeight: 500, color: "#8C887F", padding: "0 26px", whiteSpace: "nowrap", borderRight: "1px solid #E4E0D8" }}>{ind}</span>
           ))}
         </div>
+      </div>
+
+      <section id="compare" style={{ padding: "88px 24px 96px", maxWidth: 1160, margin: "0 auto", textAlign: "center" }}>
+        <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "#8A6D3B", marginBottom: 10 }}>Drag to compare</p>
+        <h2 className="display reveal" style={{ fontSize: "clamp(26px, 3.4vw, 38px)", fontWeight: 600, margin: "0 0 14px" }}>
+          From scattered chaos to one source of truth
+        </h2>
+        <p className="reveal" style={{ fontSize: 15.5, color: "#5B584F", maxWidth: 520, margin: "0 auto 44px" }}>
+          Drag the handle below to see what changes when Excel, WhatsApp, and paper files become one platform.
+        </p>
+        <div className="reveal"><CompareSlider /></div>
       </section>
 
-      {/* Why Tija — pillars */}
-      <section id="why" style={{ background: "var(--surface)", padding: "72px 24px", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+      <section id="features" style={{ background: "#FFFFFF", padding: "88px 24px", borderTop: "1px solid #E4E0D8", borderBottom: "1px solid #E4E0D8" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto" }}>
-          <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--bronze)", marginBottom: 10 }}>Why Tija</p>
-          <h2 className="reveal" style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, margin: "0 0 36px", maxWidth: 640 }}>
-            A small set of principles guiding how we build
+          <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "#8A6D3B", marginBottom: 10 }}>What's included</p>
+          <h2 className="display reveal" style={{ fontSize: "clamp(26px, 3.4vw, 38px)", fontWeight: 600, margin: "0 0 40px", maxWidth: 640 }}>
+            The essentials, done properly — nothing you don't need
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
-            {pillars.map((f, i) => {
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+            {features.map((f, i) => {
               const Icon = f.icon;
               return (
-                <div key={f.title} className={`feature-card reveal r${i + 1}`} style={{ padding: 22, border: "1px solid var(--border)", borderRadius: 12 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "var(--teal-wash)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
-                    <Icon size={16} color="var(--deep-teal)" />
+                <div key={f.title} className={`feature-card reveal r${(i % 6) + 1}`} style={{ padding: 24, border: "1px solid #E4E0D8", borderRadius: 14, background: "#FFFFFF" }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 9, background: "#E6F4F2", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+                    <Icon size={17} color="#0B5D5A" />
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{f.title}</div>
-                  <div style={{ fontSize: 13.5, color: "var(--text-secondary)", lineHeight: 1.55 }}>{f.desc}</div>
+                  <div style={{ fontSize: 15.5, fontWeight: 700, marginBottom: 7 }}>{f.title}</div>
+                  <div style={{ fontSize: 13.5, color: "#5B584F", lineHeight: 1.6 }}>{f.desc}</div>
                 </div>
               );
             })}
@@ -307,111 +309,117 @@ export default function TijaHRLandingPro() {
         </div>
       </section>
 
-      {/* For Businesses — what we're exploring, honest framing */}
-      <section id="for-businesses" style={{ padding: "72px 24px", maxWidth: 1160, margin: "0 auto" }}>
-        <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--bronze)", marginBottom: 10 }}>For businesses</p>
-        <h2 className="reveal" style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, margin: "0 0 14px", maxWidth: 640 }}>
-          Designed to bring core employee operations together
-        </h2>
-        <p className="reveal" style={{ fontSize: 15, color: "var(--text-secondary)", maxWidth: 600, marginBottom: 32, lineHeight: 1.6 }}>
-          Tija's MVP is still being shaped through direct conversations with Tanzanian organizations. These are the areas we're actively exploring:
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-          {exploring.map((f, i) => {
-            const Icon = f.icon;
-            return (
-              <div key={f.title} className={`reveal r${i + 1}`} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: 18, display: "flex", alignItems: "center", gap: 12 }}>
-                <Icon size={18} color="var(--deep-teal)" />
-                <span style={{ fontSize: 14, fontWeight: 600 }}>{f.title}</span>
-              </div>
-            );
-          })}
+      <section style={{ padding: "60px 24px", maxWidth: 1160, margin: "0 auto" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+          <div className="reveal r1" style={{ flex: "1 1 260px", background: "#FFFFFF", border: "1px solid #E4E0D8", borderRadius: 14, padding: 22, display: "flex", alignItems: "center", gap: 14 }}>
+            <Monitor size={24} color="#0B5D5A" />
+            <div>
+              <div style={{ fontSize: 14.5, fontWeight: 700 }}>Web app - coming soon </div>
+              <div style={{ fontSize: 12.5, color: "#5B584F", marginTop: 2 }}>Works on any phone, tablet, or computer browser</div>
+            </div>
+          </div>
+          <div className="reveal r2" style={{ flex: "1 1 260px", background: "#F2EEE6", border: "1px solid #E4E0D8", borderRadius: 14, padding: 22, display: "flex", alignItems: "center", gap: 14 }}>
+            <Smartphone size={24} color="#8A6D3B" />
+            <div>
+              <div style={{ fontSize: 14.5, fontWeight: 700 }}>Mobile app - coming soon</div>
+              <div style={{ fontSize: 12.5, color: "#5B584F", marginTop: 2 }}>For Android and iOS, in development</div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* About / Tanzania positioning */}
-      <section id="about" style={{ background: "var(--midnight-teal)", color: "#fff", padding: "72px 24px" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
-          <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--sand)", marginBottom: 10 }}>About</p>
-          <h2 className="reveal" style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, margin: "0 0 18px" }}>
-            Designed closer to the problem
-          </h2>
-          <p className="reveal" style={{ fontSize: 16, lineHeight: 1.7, color: "var(--teal-wash)" }}>
-            Tija HR is being shaped directly through conversations with HR professionals, business owners, and operations leaders across Tanzania — not adapted from software built for a different market. Our first customers are helping define what Tija becomes.
+      <section id="demo" style={{ background: "linear-gradient(160deg,#0B5D5A,#073E3B)", padding: "88px 24px" }}>
+        <div style={{ maxWidth: 640, margin: "0 auto" }}>
+          <p className="reveal" style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", color: "#9FD9CE", marginBottom: 10, textAlign: "center" }}>Get started</p>
+          <h2 className="display reveal" style={{ fontSize: "clamp(26px, 3.4vw, 34px)", fontWeight: 600, color: "#fff", margin: "0 0 8px", textAlign: "center" }}>Request a demo</h2>
+          <p className="reveal" style={{ fontSize: 14.5, color: "#D9EDEA", textAlign: "center", margin: "0 0 34px" }}>
+            Tell us about your organization and we'll show you TijaHR, built around how you actually work.
           </p>
+
+          {submitted ? (
+            <div className="reveal is-visible" style={{ background: "#fff", borderRadius: 14, padding: 36, textAlign: "center" }}>
+              <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#E6F4F2", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                <Check size={22} color="#0B5D5A" />
+              </div>
+              <div style={{ fontSize: 16.5, fontWeight: 700, color: "#25231F" }}>Thank you — request received</div>
+              <div style={{ fontSize: 13.5, color: "#5B584F", marginTop: 6 }}>We'll reach out within one business day to schedule your demo.</div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="reveal" style={{ background: "#fff", borderRadius: 14, padding: 30, display: "flex", flexDirection: "column", gap: 14, boxShadow: "0 30px 70px -24px rgba(0,0,0,0.4)" }}>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <div style={{ flex: "1 1 200px" }}>
+                  <label style={{ fontSize: 12.5, fontWeight: 600, color: "#5B584F", display: "block", marginBottom: 6 }}>Full name</label>
+                  <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" style={inputStyle} />
+                </div>
+                <div style={{ flex: "1 1 200px" }}>
+                  <label style={{ fontSize: 12.5, fontWeight: 600, color: "#5B584F", display: "block", marginBottom: 6 }}>Company name</label>
+                  <input required value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} placeholder="Company Ltd" style={inputStyle} />
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <div style={{ flex: "1 1 200px" }}>
+                  <label style={{ fontSize: 12.5, fontWeight: 600, color: "#5B584F", display: "block", marginBottom: 6 }}>Industry</label>
+                  <select required value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={inputStyle}>
+                    <option value="">Select industry</option>
+                    {industries.map((i) => <option key={i} value={i}>{i}</option>)}
+                  </select>
+                </div>
+                <div style={{ flex: "1 1 200px" }}>
+                  <label style={{ fontSize: 12.5, fontWeight: 600, color: "#5B584F", display: "block", marginBottom: 6 }}>Company size</label>
+                  <select required value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} style={inputStyle}>
+                    <option value="">Select size</option>
+                    <option>1–20 employees</option>
+                    <option>21–100 employees</option>
+                    <option>101–500 employees</option>
+                    <option>500+ employees</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <div style={{ flex: "1 1 200px" }}>
+                  <label style={{ fontSize: 12.5, fontWeight: 600, color: "#5B584F", display: "block", marginBottom: 6 }}>Phone</label>
+                  <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+255 7xx xxx xxx" style={inputStyle} />
+                </div>
+                <div style={{ flex: "1 1 200px" }}>
+                  <label style={{ fontSize: 12.5, fontWeight: 600, color: "#5B584F", display: "block", marginBottom: 6 }}>Email</label>
+                  <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@company.co.tz" style={inputStyle} />
+                </div>
+              </div>
+              {sendError && (
+                <div style={{ fontSize: 13, color: "#B3261E", background: "#FCEBEB", padding: "10px 14px", borderRadius: 8 }}>
+                  {sendError}
+                </div>
+              )}
+              
+              <button type="submit" disabled={sending} className="cta-btn" style={{ marginTop: 8, background: sending ? "#5B8E8B" : "#0B5D5A", color: "#fff", border: "none", borderRadius: 9, padding: "15px", fontSize: 15, fontWeight: 600, cursor: sending ? "not-allowed" : "pointer" }}>
+                {sending ? "Sending..." : "Request a demo"}
+              </button>
+            </form>
+          )}
         </div>
       </section>
 
-      {/* Demo form */}
-      {/* Footer */}
-      <footer style={{ padding: "40px 24px 32px", borderTop: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1160, margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 24 }}>
-          <div style={{ maxWidth: 280 }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 1, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, fontWeight: 700, color: "var(--deep-teal)" }}>Tija</span>
-              <span style={{ fontSize: 15, fontWeight: 500, color: "var(--text-secondary)" }}>&nbsp;HR</span>
-            </div>
-            <p style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6 }}>
-              Employee management software built for how Tanzanian organizations actually operate.
-            </p>
-          </div>
-          <div style={{ display: "flex", gap: 48, flexWrap: "wrap" }}>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>Site</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <a href="#why" style={{ fontSize: 13.5, color: "var(--text-secondary)", textDecoration: "none" }}>Why Tija</a>
-                <a href="#for-businesses" style={{ fontSize: 13.5, color: "var(--text-secondary)", textDecoration: "none" }}>For Businesses</a>
-                <a href="#about" style={{ fontSize: 13.5, color: "var(--text-secondary)", textDecoration: "none" }}>About</a>
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>Legal</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <a href="/privacy" style={{ fontSize: 13.5, color: "var(--text-secondary)", textDecoration: "none" }}>Privacy Policy</a>
-                <a href="/terms" style={{ fontSize: 13.5, color: "var(--text-secondary)", textDecoration: "none" }}>Terms of Service</a>
-              </div>
-            </div>
-          </div>
+      <footer style={{ padding: "36px 24px", textAlign: "center" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 1, justifyContent: "center", marginBottom: 8 }}>
+          <span className="display" style={{ fontSize: 17, fontWeight: 600, color: "#0B5D5A" }}>Tija</span>
+          <span style={{ fontSize: 16, fontWeight: 500, color: "#8A6D3B" }}>HR</span>
         </div>
-        <div style={{ maxWidth: 1160, margin: "28px auto 0", paddingTop: 20, borderTop: "1px solid var(--border)" }}>
-          <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}>Built in Tanzania, for East Africa.</p>
-        </div>
+        <p style={{ fontSize: 12.5, color: "#8C887F", margin: 0 }}>Built in Tanzania, for East Africa.</p>
       </footer>
     </div>
   );
 }
 
-function FormField({ label, name, field, errors, placeholder, type = "text", optional = false, fullWidth = false }) {
-  return (
-    <div style={{ flex: fullWidth ? "1 1 100%" : "1 1 200px" }}>
-      <label htmlFor={name} style={labelStyle}>{label}{!optional && !label.includes("optional") ? "" : ""}</label>
-      <input id={name} type={type} placeholder={placeholder} {...field(name)} style={inputStyle} />
-      {errors[name] && <ErrorText id={`${name}-error`}>{errors[name]}</ErrorText>}
-    </div>
-  );
-}
-
-function ErrorText({ id, children }) {
-  return <p id={id} role="alert" style={{ fontSize: 12, color: "var(--error)", margin: "5px 0 0" }}>{children}</p>;
-}
-
-const labelStyle = {
-  fontSize: 12.5,
-  fontWeight: 600,
-  color: "var(--text-secondary)",
-  display: "block",
-  marginBottom: 6,
-};
-
 const inputStyle = {
   width: "100%",
   boxSizing: "border-box",
-  padding: "11px 12px",
+  padding: "12px 12px",
   borderRadius: 8,
-  border: "1px solid var(--border)",
+  border: "1px solid #E4E0D8",
   fontSize: 13.5,
   fontFamily: "inherit",
-  color: "var(--text)",
+  color: "#25231F",
   outline: "none",
-  background: "var(--surface)",
+  background: "#F7F5F1",
+  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
 };
